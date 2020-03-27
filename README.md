@@ -92,10 +92,11 @@ The above shoud have configured SSH on the mgmt interface. You should now be abl
 So I've thought about using ansible, but since VyOS can be fully configured with a single configuration file. I've thought that for the moment using SCP to copy the file over is good enough.
 
 We perform the following from our mgmt VM:  
-```scp setup-config.sh vyos@10.7.7.1:~/```
+> ```scp setup-config.sh vyos@10.7.7.1:~/```
 
 Then we login to VyOS and do the following:  
-```sg vyattacfg -c ./setup-config.sh```
+> ```chmod +x setup-config.sh```  
+>```sg vyattacfg -c ./setup-config.sh```
 
 That's it. If we now place a VM in the same segment / interfaces as vmnet2/eth2 it will only be able to connect to the internet.
 
