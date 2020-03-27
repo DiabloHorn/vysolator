@@ -53,6 +53,7 @@ echo "[*] configuring firewall"
 set firewall state-policy established action accept
 set firewall state-policy related action accept
 set firewall state-policy invalid action drop
+set firewall source-validation strict
 
 set firewall group network-group internalranges
 set firewall group network-group internalranges network 10.0.0.0/8
@@ -60,10 +61,18 @@ set firewall group network-group internalranges network 172.16.0.0/12
 set firewall group network-group internalranges network 192.168.0.0/16
 commit
 
+set zone-policy zone local local-zone
+set zone-policy zone local default-action drop
+
 set zone-policy zone uplink
-set zone-policy zone uplink interface eth0
+set zone-policy zone uplink interface eth0t
 set zone-policy zone uplink default-action drop
 set zone-policy zone uplink description 'uplink zone'
+
+set zone-policy zone mgmt
+set zone-policy zone mgmt interface eth1
+set zone-policy zone mgmt default-action drop
+set zone-policy zone mgmt description 'mgmt zone'
 
 set zone-policy zone inetonly
 set zone-policy zone inetonly interface eth2
@@ -74,8 +83,13 @@ commit
 save
 
 set firewall name uplinkTOinetonly default-action drop
+set firewall name uplinkTOmgmt default-action drop
 commit
 
+set firewall name mgmtTOuplink default-action drop
+set firewall name mgmtTOinetonly default-action drop
+
+set firewall name inetonlyTOmgmt default-action drop
 set firewall name inetonlyTOuplink default-action accept
 set firewall name inetonlyTOuplink rule 10 action drop
 set firewall name inetonlyTOuplink rule 10 protocol tcp_udp
@@ -83,7 +97,13 @@ set firewall name inetonlyTOuplink rule 10 destination group network-group inter
 commit
 
 set zone-policy zone uplink from inetonly firewall name inetonlyTOuplink
+set zone-policy zone uplink from mgmt firewall name mgmtTOuplink
+
+set zone-policy zone mgmt from inetonly firewall name inetonlyTOmgmt
+set zone-policy zone mgmt from uplink firewall name uplinkTOmgmt
+
 set zone-policy zone inetonly from uplink firewall name uplinkTOinetonly
+set zone-policy zone inetonly from mgmt firewall name mgmtTOinetonly
 commit
 echo "[V] firewall configured"
 

@@ -106,6 +106,7 @@ That's it. If we now place a VM in the same segment / interfaces as vmnet2/eth2 
     > ```configure```  
     > ```load /opt/vyatta/etc/config.boot.default```  
     > ```commit```  
+    > ```# If you are doing this remote, connection will drop after this```  
     > ```save```  
     > ```exit```  
     > ```reboot```
@@ -117,6 +118,7 @@ Yes, of course. Be mindful of typo's
 * https://github.com/vyos/vyos-build
 * https://vyos.readthedocs.io/en/latest/install.html
 * https://spin.atomicobject.com/2017/04/03/vmware-fusion-custom-virtual-networks/
+* https://github.com/bertvv/cheat-sheets/blob/master/docs/VyOS.md
 
 
 
