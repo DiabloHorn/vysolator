@@ -47,6 +47,14 @@ echo "[V] NAT configured"
 
 save
 
+######## NTP
+echo "[*] configuring NTP"
+set system ntp server '0.pool.ntp.org'
+set system ntp server '1.pool.ntp.org'
+set system ntp server '2.pool.ntp.org'
+commit
+echo "[V] NTP configured"
+
 ######## Firewall
 echo "[*] configuring firewall"
 
@@ -88,6 +96,11 @@ commit
 
 set firewall name mgmtTOuplink default-action drop
 set firewall name mgmtTOinetonly default-action drop
+
+set firewall name localTOuplink default-action drop
+set firewall name localTOuplink rule 10 action accept
+set firewall name localTOuplink rule 10 protocol udp
+set firewall name localTOuplink rule 10 destination port 123
 
 set firewall name inetonlyTOmgmt default-action drop
 set firewall name inetonlyTOuplink rule 10 action accept
