@@ -30,6 +30,7 @@ echo "[V] eth1 configured"
 echo "[*] configuring DHCP"
 set service dhcp-server shared-network-name inetonly subnet 10.8.8.0/24 default-router '10.8.8.1'
 set service dhcp-server shared-network-name inetonly subnet 10.8.8.0/24 dns-server '8.8.8.8'
+set service dhcp-server shared-network-name inetonly subnet 10.8.8.0/24 dns-server '8.8.4.4'
 set service dhcp-server shared-network-name inetonly subnet 10.8.8.0/24 domain-name 'inetonly'
 set service dhcp-server shared-network-name inetonly subnet 10.8.8.0/24 lease '86400'
 set service dhcp-server shared-network-name inetonly subnet 10.8.8.0/24 range 0 start '10.8.8.2'
