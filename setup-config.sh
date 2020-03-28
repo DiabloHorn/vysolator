@@ -56,6 +56,13 @@ set system ntp server '2.pool.ntp.org'
 commit
 echo "[V] NTP configured"
 
+######## NTP
+echo "[*] configuring DNS"
+set system name-server '8.8.8.8'
+set system name-server '8.8.4.4'
+commit
+echo "[V] DNS configured"
+
 ######## Firewall
 echo "[*] configuring firewall"
 
@@ -72,6 +79,12 @@ commit
 
 set firewall group address-group vyos-updates address 185.144.208.249
 set firewall group address-group vyos-updates description downloads.vyos.io
+commit
+
+set firewall group address-group dns-servers address '8.8.8.8'
+set firewall group address-group dns-servers address '8.8.4.4'
+set firewall group address-group vyos-updates description 'Google DNS'
+commit
 
 set zone-policy zone local local-zone
 set zone-policy zone local default-action drop
@@ -111,6 +124,12 @@ set firewall name localTOuplink rule 20 action accept
 set firewall name localTOuplink rule 20 protocol tcp
 set firewall name localTOuplink rule 20 destination port 443
 set firewall name localTOuplink rule 20 destination group address-group vyos-updates
+commit
+
+set firewall name localTOuplink rule 30 action accept
+set firewall name localTOuplink rule 30 protocol tcp_udp
+set firewall name localTOuplink rule 30 destination port 53
+set firewall name localTOuplink rule 30 destination group address-group dns-servers
 commit
 
 set firewall name inetonlyTOmgmt default-action drop
