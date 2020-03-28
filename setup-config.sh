@@ -133,6 +133,7 @@ set firewall name localTOuplink rule 30 destination group address-group dns-serv
 commit
 
 set firewall name inetonlyTOmgmt default-action drop
+
 set firewall name inetonlyTOuplink rule 10 action accept
 set firewall name inetonlyTOuplink rule 10 protocol tcp_udp
 set firewall name inetonlyTOuplink rule 10 destination group network-group ! internalranges
@@ -140,6 +141,7 @@ commit
 
 set zone-policy zone uplink from inetonly firewall name inetonlyTOuplink
 set zone-policy zone uplink from mgmt firewall name mgmtTOuplink
+set zone-policy zone uplink from local firewall name localTOuplink
 
 set zone-policy zone mgmt from inetonly firewall name inetonlyTOmgmt
 set zone-policy zone mgmt from uplink firewall name uplinkTOmgmt
