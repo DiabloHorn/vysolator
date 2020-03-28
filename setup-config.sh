@@ -30,6 +30,7 @@ echo "[V] eth1 configured"
 echo "[*] configuring DHCP"
 set service dhcp-server shared-network-name inetonly subnet 10.8.8.0/24 default-router '10.8.8.1'
 set service dhcp-server shared-network-name inetonly subnet 10.8.8.0/24 dns-server '8.8.8.8'
+set service dhcp-server shared-network-name inetonly subnet 10.8.8.0/24 dns-server '8.8.4.4'
 set service dhcp-server shared-network-name inetonly subnet 10.8.8.0/24 domain-name 'inetonly'
 set service dhcp-server shared-network-name inetonly subnet 10.8.8.0/24 lease '86400'
 set service dhcp-server shared-network-name inetonly subnet 10.8.8.0/24 range 0 start '10.8.8.2'
@@ -47,6 +48,21 @@ echo "[V] NAT configured"
 
 save
 
+######## NTP
+echo "[*] configuring NTP"
+set system ntp server '0.pool.ntp.org'
+set system ntp server '1.pool.ntp.org'
+set system ntp server '2.pool.ntp.org'
+commit
+echo "[V] NTP configured"
+
+######## NTP
+echo "[*] configuring DNS"
+set system name-server '8.8.8.8'
+set system name-server '8.8.4.4'
+commit
+echo "[V] DNS configured"
+
 ######## Firewall
 echo "[*] configuring firewall"
 
@@ -56,9 +72,18 @@ set firewall state-policy invalid action drop
 set firewall source-validation strict
 
 set firewall group network-group internalranges
-set firewall group network-group internalranges network 10.0.0.0/8
-set firewall group network-group internalranges network 172.16.0.0/12
-set firewall group network-group internalranges network 192.168.0.0/16
+set firewall group network-group internalranges network '10.0.0.0/8'
+set firewall group network-group internalranges network '172.16.0.0/12'
+set firewall group network-group internalranges network '192.168.0.0/16'
+commit
+
+set firewall group address-group vyos-updates address '185.144.208.249'
+set firewall group address-group vyos-updates description 'downloads.vyos.io'
+commit
+
+set firewall group address-group dns-servers address '8.8.8.8'
+set firewall group address-group dns-servers address '8.8.4.4'
+set firewall group address-group dns-servers description 'Google DNS'
 commit
 
 set zone-policy zone local local-zone
@@ -89,15 +114,34 @@ commit
 set firewall name mgmtTOuplink default-action drop
 set firewall name mgmtTOinetonly default-action drop
 
+set firewall name localTOuplink default-action drop
+
+set firewall name localTOuplink rule 10 action accept
+set firewall name localTOuplink rule 10 protocol udp
+set firewall name localTOuplink rule 10 destination port 123
+
+set firewall name localTOuplink rule 20 action accept
+set firewall name localTOuplink rule 20 protocol tcp
+set firewall name localTOuplink rule 20 destination port 443
+set firewall name localTOuplink rule 20 destination group address-group vyos-updates
+commit
+
+set firewall name localTOuplink rule 30 action accept
+set firewall name localTOuplink rule 30 protocol tcp_udp
+set firewall name localTOuplink rule 30 destination port 53
+set firewall name localTOuplink rule 30 destination group address-group dns-servers
+commit
+
 set firewall name inetonlyTOmgmt default-action drop
-set firewall name inetonlyTOuplink default-action accept
-set firewall name inetonlyTOuplink rule 10 action drop
+
+set firewall name inetonlyTOuplink rule 10 action accept
 set firewall name inetonlyTOuplink rule 10 protocol tcp_udp
-set firewall name inetonlyTOuplink rule 10 destination group network-group internalranges
+set firewall name inetonlyTOuplink rule 10 destination group network-group ! internalranges
 commit
 
 set zone-policy zone uplink from inetonly firewall name inetonlyTOuplink
 set zone-policy zone uplink from mgmt firewall name mgmtTOuplink
+set zone-policy zone uplink from local firewall name localTOuplink
 
 set zone-policy zone mgmt from inetonly firewall name inetonlyTOmgmt
 set zone-policy zone mgmt from uplink firewall name uplinkTOmgmt
