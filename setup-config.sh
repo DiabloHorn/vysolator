@@ -83,7 +83,7 @@ commit
 
 set firewall group address-group dns-servers address '8.8.8.8'
 set firewall group address-group dns-servers address '8.8.4.4'
-set firewall group address-group vyos-updates description 'Google DNS'
+set firewall group address-group dns-servers description 'Google DNS'
 commit
 
 set zone-policy zone local local-zone
