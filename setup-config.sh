@@ -70,6 +70,9 @@ set firewall group network-group internalranges network 172.16.0.0/12
 set firewall group network-group internalranges network 192.168.0.0/16
 commit
 
+set firewall group address-group vyos-updates address 185.144.208.249
+set firewall group address-group vyos-updates description downloads.vyos.io
+
 set zone-policy zone local local-zone
 set zone-policy zone local default-action drop
 
@@ -99,9 +102,16 @@ set firewall name mgmtTOuplink default-action drop
 set firewall name mgmtTOinetonly default-action drop
 
 set firewall name localTOuplink default-action drop
+
 set firewall name localTOuplink rule 10 action accept
 set firewall name localTOuplink rule 10 protocol udp
 set firewall name localTOuplink rule 10 destination port 123
+
+set firewall name localTOuplink rule 20 action accept
+set firewall name localTOuplink rule 20 protocol tcp
+set firewall name localTOuplink rule 20 destination port 443
+set firewall name localTOuplink rule 20 destination group address-group vyos-updates
+commit
 
 set firewall name inetonlyTOmgmt default-action drop
 set firewall name inetonlyTOuplink rule 10 action accept
