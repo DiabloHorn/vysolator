@@ -72,13 +72,13 @@ set firewall state-policy invalid action drop
 set firewall source-validation strict
 
 set firewall group network-group internalranges
-set firewall group network-group internalranges network 10.0.0.0/8
-set firewall group network-group internalranges network 172.16.0.0/12
-set firewall group network-group internalranges network 192.168.0.0/16
+set firewall group network-group internalranges network '10.0.0.0/8'
+set firewall group network-group internalranges network '172.16.0.0/12'
+set firewall group network-group internalranges network '192.168.0.0/16'
 commit
 
-set firewall group address-group vyos-updates address 185.144.208.249
-set firewall group address-group vyos-updates description downloads.vyos.io
+set firewall group address-group vyos-updates address '185.144.208.249'
+set firewall group address-group vyos-updates description 'downloads.vyos.io'
 commit
 
 set firewall group address-group dns-servers address '8.8.8.8'
