@@ -90,10 +90,9 @@ set firewall name mgmtTOuplink default-action drop
 set firewall name mgmtTOinetonly default-action drop
 
 set firewall name inetonlyTOmgmt default-action drop
-set firewall name inetonlyTOuplink default-action accept
-set firewall name inetonlyTOuplink rule 10 action drop
+set firewall name inetonlyTOuplink rule 10 action accept
 set firewall name inetonlyTOuplink rule 10 protocol tcp_udp
-set firewall name inetonlyTOuplink rule 10 destination group network-group internalranges
+set firewall name inetonlyTOuplink rule 10 destination group network-group ! internalranges
 commit
 
 set zone-policy zone uplink from inetonly firewall name inetonlyTOuplink
