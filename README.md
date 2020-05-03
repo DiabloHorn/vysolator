@@ -101,7 +101,7 @@ Then we login to VyOS and do the following:
 That's it. If we now place a VM in the same segment / interfaces as vmnet2/eth2 it will only be able to connect to the internet.
 
 ## Troubleshooting
-* *Running "sudo docker build -t vyos-builder docker" does not work (container is unable to install packages)
+* *Running "sudo docker build -t vyos-builder docker" does not work (container is unable to install packages)*
 When running docker on Ubuntu 16 you might have no internet inside your containers, comment out dnsmasq in /etc/NetworkManager/NetworkManager.conf and restart the Network Manager service. 
 * *I messed up the configuration*
     > ```configure```  
