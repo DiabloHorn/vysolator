@@ -69,6 +69,7 @@ To be able to connect to VyOS via SSH another VM has to be placed in the same ne
 #### Running setup script
 We perform the following from our mgmt VM:  
 > ```scp setup-config.sh vyos@10.7.7.1:~/```
+
 > ```ssh vyos@10.7.7.1 "chmod +x setup-config.sh ; sg vyattacfg -c ./setup-config.sh"```  
 
 That's it. If we now place a VM in the same segment / interfaces as vmnet3/eth2 it will only be able to connect to the internet.
