@@ -54,26 +54,24 @@ The following commands will enable SSH and DHCP on the 'mgmt' interface:
 
 > ```configure```  
 > ```set interfaces ethernet eth1 description 'mgmt interface'```  
-> ```set interfaces ethernet eth1 address '10.7.7.1/24'```  
+> ```set interfaces ethernet eth1 address '10.7.7.1/24'```
+> ```set service dhcp-server shared-network-name mgmt subnet 10.7.7.0/24```  
+> ```set service dhcp-server shared-network-name mgmt subnet 10.7.7.0/24 range 0 start '10.7.7.2'```  
+> ```set service dhcp-server shared-network-name mgmt subnet 10.7.7.0/24 range 0 stop '10.7.7.10'```   
 > ```set service ssh listen-address '10.7.7.1'```  
 > ```set service ssh port '22'```  
-> ```set service dhcp-server shared-network-name mgmt subnet 10.7.7.0/24```  
-> ```set service dhcp-server shared-network-name mgmt subnet 10.7.7.0/24 range start '10.7.7.2'```  
-> ```set service dhcp-server shared-network-name mgmt subnet 10.7.7.0/24 range stop '10.7.7.254'``` 
 > ```commit```  
 > ```save```  
 > ```exit```
 
-To be able to connect to VyOS via SSH another VM has to be placed in the same network/segment. The ip address, subnet mask and gateway have to be assigned manually (for ex. 10.7.7.2 , 255.255.255.0, 10.7.7.1). 
+To be able to connect to VyOS via SSH another VM has to be placed in the same network/segment.
+
 #### Running setup script
 We perform the following from our mgmt VM:  
 > ```scp setup-config.sh vyos@10.7.7.1:~/```
+> ```ssh vyos@10.7.7.1 "chmod +x setup-config.sh ; sg vyattacfg -c ./setup-config.sh"```  
 
-Then we login to VyOS and do the following:  
-> ```chmod +x setup-config.sh```  
->```sg vyattacfg -c ./setup-config.sh```
-
-That's it. If we now place a VM in the same segment / interfaces as vmnet2/eth2 it will only be able to connect to the internet.
+That's it. If we now place a VM in the same segment / interfaces as vmnet3/eth2 it will only be able to connect to the internet.
 
 ## Troubleshooting
 * *Running "sudo docker build -t vyos-builder docker" does not work (container is unable to install packages)*

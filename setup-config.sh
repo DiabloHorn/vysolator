@@ -77,20 +77,19 @@ set firewall group network-group internalranges
 set firewall group network-group internalranges network '10.0.0.0/8'
 set firewall group network-group internalranges network '172.16.0.0/12'
 set firewall group network-group internalranges network '192.168.0.0/16'
-commit
 
 set firewall group address-group vyos-updates address '185.144.208.249'
 set firewall group address-group vyos-updates description 'downloads.vyos.io'
-commit
+
 
 set firewall group address-group dns-servers address '8.8.8.8'
 set firewall group address-group dns-servers address '8.8.4.4'
 set firewall group address-group dns-servers description 'Google DNS'
-commit
 
 ######## define zone policies
 set zone-policy zone local local-zone
 set zone-policy zone local default-action drop
+set zone-policy zone local description 'local zone'
 
 set zone-policy zone uplink
 set zone-policy zone uplink interface eth0
@@ -106,20 +105,19 @@ set zone-policy zone inetonly
 set zone-policy zone inetonly interface eth2
 set zone-policy zone inetonly default-action drop
 set zone-policy zone inetonly description 'internet only'
-commit
-
-save
 
 ######## configure firewall rules per zone
 set firewall name uplinkTOinetonly default-action drop
 set firewall name uplinkTOmgmt default-action drop
-commit
 
 set firewall name mgmtTOuplink default-action drop
 set firewall name mgmtTOinetonly default-action drop
+set firewall name mgmtTOlocal default-action drop
+set firewall name mgmtTOlocal rule 10 action accept
+set firewall name mgmtTOlocal rule 10 protocol tcp
+set firewall name mgmtTOlocal rule 10 destination port 22
 
 set firewall name localTOuplink default-action drop
-
 set firewall name localTOuplink rule 10 action accept
 set firewall name localTOuplink rule 10 protocol udp
 set firewall name localTOuplink rule 10 destination port 123
@@ -128,13 +126,11 @@ set firewall name localTOuplink rule 20 action accept
 set firewall name localTOuplink rule 20 protocol tcp
 set firewall name localTOuplink rule 20 destination port 443
 set firewall name localTOuplink rule 20 destination group address-group vyos-updates
-commit
 
 set firewall name localTOuplink rule 30 action accept
 set firewall name localTOuplink rule 30 protocol tcp_udp
 set firewall name localTOuplink rule 30 destination port 53
 set firewall name localTOuplink rule 30 destination group address-group dns-servers
-commit
 
 set firewall name inetonlyTOmgmt default-action drop
 
@@ -143,9 +139,9 @@ set firewall name inetonlyTOuplink rule 10 action drop
 set firewall name inetonlyTOuplink rule 10 protocol tcp_udp
 set firewall name inetonlyTOuplink rule 10 destination group network-group internalranges
 
-commit
-
 ######## apply rules to zones
+set zone-policy zone local from mgmt firewall name mgmtTOlocal
+
 set zone-policy zone uplink from inetonly firewall name inetonlyTOuplink
 set zone-policy zone uplink from mgmt firewall name mgmtTOuplink
 set zone-policy zone uplink from local firewall name localTOuplink
@@ -155,7 +151,9 @@ set zone-policy zone mgmt from uplink firewall name uplinkTOmgmt
 
 set zone-policy zone inetonly from uplink firewall name uplinkTOinetonly
 set zone-policy zone inetonly from mgmt firewall name mgmtTOinetonly
+
 commit
+
 echo "[V] firewall configured"
 
 save
