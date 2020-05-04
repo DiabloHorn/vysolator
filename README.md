@@ -53,16 +53,16 @@ On the commandline interface just run ```install image``` and make some common s
 The following commands will enable SSH and DHCP on the 'mgmt' interface:
 
 > ```configure```  
-> ```set interfaces ethernet eth1 description 'mgmt interface'```  
-> ```set interfaces ethernet eth1 address '10.7.7.1/24'```
-> ```set service dhcp-server shared-network-name mgmt subnet 10.7.7.0/24```  
-> ```set service dhcp-server shared-network-name mgmt subnet 10.7.7.0/24 range 0 start '10.7.7.2'```  
-> ```set service dhcp-server shared-network-name mgmt subnet 10.7.7.0/24 range 0 stop '10.7.7.10'```   
-> ```set service ssh listen-address '10.7.7.1'```  
-> ```set service ssh port '22'```  
-> ```commit```  
-> ```save```  
-> ```exit```
+> ```set interfaces ethernet eth1 description 'mgmt interface'```   
+> ```set interfaces ethernet eth1 address '10.7.7.1/24'```  
+> ```set service dhcp-server shared-network-name mgmt subnet 10.7.7.0/24``` 
+> ```set service dhcp-server shared-network-name mgmt subnet 10.7.7.0/24 range 0 start '10.7.7.2'```    
+> ```set service dhcp-server shared-network-name mgmt subnet 10.7.7.0/24 range 0 stop '10.7.7.10'```    
+> ```set service ssh listen-address '10.7.7.1'```   
+> ```set service ssh port '22'```   
+> ```commit```   
+> ```save```      
+> ```exit```    
 
 To be able to connect to VyOS via SSH another VM has to be placed in the same network/segment.
 
