@@ -24,7 +24,7 @@ echo "[V] eth0 configured"
 set interfaces ethernet eth2 description 'inetonly'
 set interfaces ethernet eth2 address '10.8.8.1/24'
 commit
-echo "[V] eth1 configured"
+echo "[V] eth2 configured"
 
 ######## DHCP
 echo "[*] configuring DHCP"

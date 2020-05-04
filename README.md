@@ -32,21 +32,16 @@ A pre-build iso is available through VyOS (https://downloads.vyos.io/). However,
 The result of the above commands will be the iso created in the ```build``` directory within the ```vyos-build``` directory. This is the iso we can use to install VyOS.
 
 ## Configure additional VMware networks
-
-What you have to do is add network interfaces that do nothing, no DHCP no nothing. Since this is different per virtualization solution you can refer to the following guides, depending on the virtualization software that you use:
+We will add to new networks two VMWare (vmnet2,vmnet3) that have zero interaction with the host. Below are the configration steps per VMWare version:
 
 * [VMWare fusion and fusion pro](vmware-fusion_howto-add-interfaces.md)
 * VMware workstation (todo)
 * VirtualBox (todo)
 
-
-
 ## Create and configure the VyOS virtual machine
 
 ### Creating the virtual machine
-Add a new virual machine and select install from disc or image as the installation method. In the next screen select the vyos image we build in the previous step. As the operating system we choose Linux/Debian 7.x 64-bit (newer Debian version might also work). Recommended disk space is 5 GB and memory 512 mb.
-
-After you are happy with the VM and boot from the iso you can login with the following credentials:
+Add a new virual machine and select install from disc or image as the installation method. In the next screen select the vyos image we build in the previous step. As the operating system we choose Linux/Debian 7.x 64-bit (newer Debian version might also work). Recommended disk space is 5 GB and memory 512 mb. Give it two network adapters, one connected to vmnet2 and the other to vmnet3. After the vm has booted login with: 
 
 Username: ```vyos```  
 Password: ```vyos```
@@ -54,28 +49,23 @@ Password: ```vyos```
 On the commandline interface just run ```install image``` and make some common sense choices. After you are one, reboot the system. You will be able to login into your virtual gateway using your chosen password. The username will remain ```vyos```. You can now shutdown (```poweroff```) your virtual machine to be able to configure some additional network interfaces.
 
 ### Configure the virtual machine
-Let's configure the bare minimum to be able to configure VyOS remotely. Our VyOS virtual machine should have three interfaces. Which we will use as follow:
-
-* ```show interfaces ethernet```
-    * eth0 will be our uplink or connection to the internet
-    * eth1 will be our mgmt interface to control vyos remotely from a different VM
-    * eth2 will be our internet only interfaces where we can place multiple VMs
-
-After logging in the following list of commands will perform the basic configuration to be able to manage VyOS remotely.
+#### Enable ssh for remote management
+The following commands will enable SSH and DHCP on the 'mgmt' interface:
 
 > ```configure```  
 > ```set interfaces ethernet eth1 description 'mgmt interface'```  
-> ```set interfaces ethernet eth1 address '10.7.7.1'```
-> ```commit```  
+> ```set interfaces ethernet eth1 address '10.7.7.1/24'```  
 > ```set service ssh listen-address '10.7.7.1'```  
 > ```set service ssh port '22'```  
+> ```set service dhcp-server shared-network-name mgmt subnet 10.7.7.0/24```  
+> ```set service dhcp-server shared-network-name mgmt subnet 10.7.7.0/24 range start '10.7.7.2'```  
+> ```set service dhcp-server shared-network-name mgmt subnet 10.7.7.0/24 range stop '10.7.7.254'``` 
 > ```commit```  
 > ```save```  
 > ```exit```
 
-The above shoud have configured SSH on the mgmt interface. You should now be able to SSH into VyOS from a different VM. Ensure that the mgmt VM is configured with the vmnet2 interface. This mgmt VM will not have internet or any other connections.
-
-## Running setup script
+To be able to connect to VyOS via SSH another VM has to be placed in the same network/segment. The ip address, subnet mask and gateway have to be assigned manually (for ex. 10.7.7.2 , 255.255.255.0, 10.7.7.1). 
+#### Running setup script
 We perform the following from our mgmt VM:  
 > ```scp setup-config.sh vyos@10.7.7.1:~/```
 
