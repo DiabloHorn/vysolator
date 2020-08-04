@@ -8,7 +8,7 @@ This guide concerns the adding of network interfaces without DHCP to VMware fusi
         > answer VNET_2_DHCP no  
         > answer VNET_2_HOSTONLY_NETMASK 255.255.255.0  
         > answer VNET_2_HOSTONLY_SUBNET 10.7.7.0  
-        > answer VNET_2_VIRTUAL_ADAPTER no
+        > answer VNET_2_VIRTUAL_ADAPTER no  
         > answer VNET_3_DHCP no  
         > answer VNET_3_HOSTONLY_NETMASK 255.255.255.0  
         > answer VNET_3_HOSTONLY_SUBNET 10.8.8.0  
